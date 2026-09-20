@@ -1,0 +1,22 @@
+RECOMMENDED: IMPORT THROUGH GITHUB
+
+1. Unzip this project on your computer.
+2. Create a new empty GitHub repository, e.g. hoodmon-tcg-app.
+3. In GitHub choose Add file > Upload files.
+4. Drag ALL FILES AND FOLDERS FROM INSIDE the unzipped hoodmon-bolt-starter folder into GitHub. Do not upload the ZIP itself.
+5. Commit the files.
+6. Open Bolt.new.
+7. On the Bolt homepage click the GitHub icon below the prompt box.
+8. Choose Import from URL (or select the repository from your list).
+9. Paste/select the GitHub repository and choose it.
+10. Once Bolt loads the project, paste this prompt:
+
+Continue this existing HOODMON TCG project. Read claude.md first and obey it as canonical project instructions. Do not rewrite src/game/engine. First run/install the project and fix only integration/build errors. Then build the battle screen around GameContext with the existing FSM and zones. Preserve the canonical 2500 LP, 5 starting Bond/10 max, 3 Objective Star victory, 6-card per-player Task Deck, 3 visible Task slots, Stage 4 Transcended, Marked/Leashed, and printed attack-damage rules.
+
+ALTERNATIVE: STACKBLITZ
+
+1. Create an empty StackBlitz project.
+2. Delete its starter files.
+3. Drag the extracted project files/folders into the StackBlitz editor.
+4. Save.
+5. Click Open in Bolt.
