@@ -11,7 +11,7 @@ RECOMMENDED: IMPORT THROUGH GITHUB
 9. Paste/select the GitHub repository and choose it.
 10. Once Bolt loads the project, paste this prompt:
 
-Continue this existing HOODMON TCG project. Read claude.md first and obey it as canonical project instructions. Do not rewrite src/game/engine. First run/install the project and fix only integration/build errors. Then build the battle screen around GameContext with the existing FSM and zones. Preserve the canonical 2500 LP, 5 starting Bond/10 max, 3 Objective Star victory, 6-card per-player Task Deck, 3 visible Task slots, Stage 4 Transcended, Marked/Leashed, and printed attack-damage rules.
+Continue this existing HOODMON TCG project. Read claude.md first and treat it as the canonical Official Core Rulebook v2.0 implementation. Keep Battle as the signed-in home. Preserve 2,500 LP, 5-card opening hand, 5 starting Bond/10 max, 4 Objective Star victory, 40-card Main Deck, separate 6-card Task Deck, three visible Task slots with one starting face-up Task per player, Active/Reserve Command rules, Round 2+ evolution, printed attack damage, two Trap zones, three Magic/Equipment zones, and v2.0 Reaction Windows. Do not reintroduce generic Marked/Leashed states. Build UI through GameContext and do not duplicate rules in React.
 
 ALTERNATIVE: STACKBLITZ
 

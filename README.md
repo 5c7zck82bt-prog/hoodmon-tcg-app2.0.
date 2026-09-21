@@ -1,40 +1,26 @@
 # HOODMON TCG Digital Arena — Series 1 Integrated Build
 
-This package is the HOODMON Vite/React app source with the Series 1 remaster card library integrated.
+This package is the HOODMON Vite/React app source with the Series 1 remaster library and the Official Core Rulebook v2.0 battle settings integrated.
 
 ## Included
-
-- 110 Series 1 card images under `public/cards/` (optimized WebP runtime assets)
-- Card database in `src/data/series1Cards.ts`
-- Home dashboard
-- Searchable/filterable 110-card collection
-- Persistent deck builder with 40-card Main Deck / 6-card Task Deck / 1 Tamer sections
-- Local browser persistence for deck builds
-- Existing HOODMON FSM battle engine and battle UI
-- Current quick-reference values used by the digital engine: 2,500 LP, starting Bond 5, Bond cap 10, 3 Objective Stars
-- Responsive desktop/mobile layout
+- Series 1 card database in `src/data/series1Cards.ts`
+- Searchable/filterable Collection
+- Persistent 40 Main / 6 Task / 1 Tamer deck builder
+- Signed-in Battle page as the player home
+- Framework-neutral battle engine in `src/game/engine/`
+- v2.0 standard settings: 2,500 LP, 5-card opening hand, 5 starting Bond, 10 Bond cap, 4 Objective Stars, 6-card Task Deck, three Task slots, Round 2+ evolution
+- Setup/mulligan, free starting Basic placement, deployment, Active/Reserve Commands, cross-player Task attempts, printed attack damage, Reaction Windows, knockout promotion, deck-out and objective victory
 
 ## Run locally
-
 ```bash
 npm install
 npm run dev
 ```
 
 Production build:
-
 ```bash
 npm run build
 ```
 
-## Bolt
-
-Upload the project folder/ZIP to Bolt and run the normal Vite workflow. No external image hosting is required; all card art used by the app is bundled in `public/cards`.
-
-## Card assets
-
-`CARD_ASSET_SOURCES.json` records which corrected/remastered source image was used for each numbered Series 1 card. Runtime assets are resized WebP copies for fast app loading; source master PNGs are not duplicated in this code ZIP.
-
 ## Battle engine note
-
-The engine source is included and drives turn/phase/attack/reaction state. The complete 110-card visual database is available to the Collection and Deck Builder. Individual printed effects remain represented by the card assets; only definitions explicitly wired in `src/game/demoData.ts` are executed in the battle demo until each Series 1 effect is encoded as engine effects.
+The full 110-card visual database and the executable gameplay database are intentionally separate. Only cards whose printed rules have been encoded and verified belong in the executable definition map. The current arena uses a practice fixture for engine testing; do not invent missing Series 1 effects. The next content milestone is encoding the approved printed rules for the full set and feeding saved legal player decks into battle setup.
