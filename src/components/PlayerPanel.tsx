@@ -1,3 +1,4 @@
+import { CardArt } from './CardArt'
 import { useGame } from '../game/GameContext'
 import { cardById } from '../data/series1Cards'
 import type { PlayerId } from '../game/engine/types'
@@ -31,7 +32,7 @@ export function PlayerPanel({ playerId, opponent = false }: { playerId: PlayerId
 
       <div className="hoodmon-row">
         <div className={`active-card ${active?.readyState === 'exhausted' ? 'exhausted' : ''}`}>
-          {activeArt && <img className="battle-card-art" src={activeArt.image} alt="" />}
+          {activeArt && <CardArt card={activeArt} className="battle-card-art" alt="" />}
           <div className="battle-card-copy">
             <span className="eyebrow">ACTIVE HOODMON</span>
             <strong>{activeDef?.name ?? 'EMPTY'}</strong>

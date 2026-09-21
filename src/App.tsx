@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useState, type Dispatch, type ReactNode, type SetStateAction } from 'react'
 import { BattleControls } from './components/BattleControls'
+import { CardArt } from './components/CardArt'
 import { PhaseBar } from './components/PhaseBar'
 import { PlayerPanel } from './components/PlayerPanel'
 import { GameProvider, useGame } from './game/GameContext'
@@ -118,7 +119,7 @@ function HomePage({ onNavigate, onOpen }: { onNavigate: (view: View) => void; on
         <div className="hero-stack" aria-label="Featured Hoodmon cards">
           {featured.map((card, index) => (
             <button key={card.id} className={`hero-card hero-card-${index + 1}`} onClick={() => onOpen(card)}>
-              <img src={card.image} alt={`${card.id} ${card.name}`} />
+              <CardArt card={card} />
             </button>
           ))}
         </div>
@@ -188,7 +189,7 @@ function CardTile({ card, onOpen, action }: { card: SeriesCard; onOpen: (card: S
   return (
     <article className="card-tile">
       <button className="card-image-button" onClick={() => onOpen(card)}>
-        <img loading="lazy" src={card.image} alt={`${card.id} ${card.name}`} />
+        <CardArt card={card} loading="lazy" />
       </button>
       <div className="card-tile-meta">
         <div><span>{card.id}</span><b>{card.name}</b><small>{card.kind} · {card.family}</small></div>
@@ -270,7 +271,7 @@ function DeckBuilder({ deck, setDeck, onOpen }: { deck: DeckState; setDeck: Disp
             {grouped.length === 0 && <div className="empty-deck">No cards in this section yet.</div>}
             {grouped.map(({ card, copies }) => (
               <div className="deck-list-row" key={card.id}>
-                <img src={card.image} alt="" />
+                <CardArt card={card} alt="" />
                 <div><b>{card.name}</b><span>{card.id} · {card.kind}</span></div>
                 <strong>×{copies}</strong>
                 <button onClick={() => removeCard(activeSection, card.id)}>−</button>
@@ -362,7 +363,7 @@ function CardModal({ card, onClose }: { card: SeriesCard | null; onClose: () => 
     <div className="modal-backdrop" onMouseDown={onClose}>
       <div className="card-modal" onMouseDown={(e) => e.stopPropagation()}>
         <button className="modal-close" onClick={onClose}>×</button>
-        <img src={card.image} alt={`${card.id} ${card.name}`} />
+        <CardArt card={card} />
         <div className="modal-meta"><span>{card.id} · {card.kind}</span><h2>{card.name}</h2><p>{card.family}</p></div>
       </div>
     </div>
