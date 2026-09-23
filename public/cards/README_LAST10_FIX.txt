@@ -1,0 +1,1 @@
+HOODMON asset repair staging marker. Missing optimized display assets HDM-100 through HDM-109 are being restored from the verified v1.6.19 package. HDM-110 already exists in this repository.
