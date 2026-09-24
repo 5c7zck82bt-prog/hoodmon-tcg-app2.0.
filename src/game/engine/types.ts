@@ -2,7 +2,7 @@ export type PlayerId = "P1" | "P2";
 export type Phase = "Refresh" | "Draw" | "Bond" | "Main" | "Command" | "End";
 export type EngineStatus = "active" | "reaction" | "awaiting_promotion" | "game_over";
 export type ReadyState = "ready" | "exhausted";
-export type Position = "active" | "reserve_1" | "reserve_2" | "reserve_3" | "discard" | "banished";
+export type Position = "tamer" | "active" | "reserve_1" | "reserve_2" | "reserve_3" | "discard" | "banished";
 export type CardType = "tamer" | "hoodmon" | "magic" | "trap" | "field" | "task";
 export type StageLevel = 1 | 2 | 3 | 4;
 
@@ -43,6 +43,10 @@ export interface CardDefinition {
   taskDifficulty?: number;
   taskTier?: "Street" | "Major" | "Crisis";
   magicSubtype?: "Standard" | "Quick" | "Continuous" | "Equipment";
+  alignment?: string[];
+  archetypeTags?: string[];
+  family?: string;
+  rulesText?: string;
 }
 
 export interface RuntimeRestrictions {
@@ -98,6 +102,7 @@ export interface PlayerState {
   taskDeck: string[];
   taskZone: [string | null, string | null, string | null];
   resolvedTasks: string[];
+  oncePerTurnUsage: Record<string, number>;
 }
 
 export interface PendingAttack {
@@ -155,5 +160,7 @@ export interface GameSetup {
   p2Deck: string[];
   p1TaskDeck: string[];
   p2TaskDeck: string[];
+  p1Tamer?: string;
+  p2Tamer?: string;
   localFaceToFaceMode?: boolean;
 }
