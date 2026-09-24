@@ -5,14 +5,39 @@ import {
 } from "./constants";
 import { applyEffect } from "./effects";
 import { advancePhase, acknowledgePassInterstitial, enterPhase } from "./fsm";
-import type { CardDefinition, EngineEffect, GameSetup, GameState, PlayerId, PlayerState } from "./types";
+import type { CardDefinition, CardInstance, EngineEffect, GameSetup, GameState, Modifier, PlayerId, PlayerState } from "./types";
 import { declareAttack, addReaction, passReaction, resolveReactionWindow } from "./combat";
 import { evolveHoodmon } from "./evolution";
 import { attemptTask } from "./tasks";
 import { moveActiveToReserve, leavePlayToDiscard } from "./movement";
 import { haltIfWinner } from "./win";
+import {
+  activateCapin,
+  getCapinSearchCandidates,
+  recordOpponentCardReveal,
+  reduceHoodmonAtkWithCapinCheck,
+} from "./tamer";
 
-function makePlayer(id: PlayerId, deck: string[], taskDeck: string[]): PlayerState {
+function makeTamer(id: PlayerId, definitionId?: string): CardInstance | null {
+  if (!definitionId) return null;
+  return {
+    instanceId: `${id}-tamer`,
+    definitionId,
+    owner: id,
+    controller: id,
+    readyState: "ready",
+    position: "tamer",
+    marked: false,
+    leashed: false,
+    damageTaken: 0,
+    commandsUsedThisTurn: 0,
+    evolutionStack: [],
+    restrictions: {},
+    modifiers: [],
+  };
+}
+
+function makePlayer(id: PlayerId, deck: string[], taskDeck: string[], tamerId?: string): PlayerState {
   if (taskDeck.length !== TASK_DECK_SIZE) throw new Error(`Each player must bring exactly ${TASK_DECK_SIZE} Task cards.`);
   return {
     id,
@@ -24,7 +49,7 @@ function makePlayer(id: PlayerId, deck: string[], taskDeck: string[]): PlayerSta
     hand: [],
     discard: [],
     banished: [],
-    tamer: null,
+    tamer: makeTamer(id, tamerId),
     activeHoodmon: null,
     reserves: [null, null, null],
     magic: [null, null, null],
@@ -33,6 +58,7 @@ function makePlayer(id: PlayerId, deck: string[], taskDeck: string[]): PlayerSta
     taskDeck: [...taskDeck],
     taskZone: [null, null, null],
     resolvedTasks: [],
+    oncePerTurnUsage: {},
   };
 }
 
@@ -44,8 +70,8 @@ export function createGame(setup: GameSetup): GameState {
     round: 1,
     turnNumber: 1,
     players: {
-      P1: makePlayer("P1", setup.p1Deck, setup.p1TaskDeck),
-      P2: makePlayer("P2", setup.p2Deck, setup.p2TaskDeck),
+      P1: makePlayer("P1", setup.p1Deck, setup.p1TaskDeck, setup.p1Tamer),
+      P2: makePlayer("P2", setup.p2Deck, setup.p2TaskDeck, setup.p2Tamer),
     },
     reactionWindow: null,
     winner: null,
@@ -55,7 +81,6 @@ export function createGame(setup: GameSetup): GameState {
     eventLog: [],
   };
 
-  // Core setup: reveal one Task from each player's separate Task Deck.
   state.players.P1.taskZone[0] = state.players.P1.taskDeck.shift() ?? null;
   state.players.P2.taskZone[0] = state.players.P2.taskDeck.shift() ?? null;
   return enterPhase(state, "Refresh");
@@ -82,4 +107,34 @@ export class HoodmonEngine {
   effect(effect: EngineEffect) { this.state = applyEffect(this.state, effect); return this.state; }
   retreat(player: PlayerId, reserveIndex: 0|1|2) { this.state = moveActiveToReserve(this.state, player, reserveIndex); return this.state; }
   discardHoodmon(player: PlayerId, instanceId: string) { this.state = leavePlayToDiscard(this.state, player, instanceId); return this.state; }
+
+  capinSearchCandidates(player: PlayerId) {
+    return getCapinSearchCandidates(this.state, this.definitions, player);
+  }
+  activateCapin(player: PlayerId, chosenDefinitionId: string) {
+    this.state = activateCapin(this.state, this.definitions, player, chosenDefinitionId); return this.state;
+  }
+  recordOpponentReveal(player: PlayerId, sourceDefinitionId: string) {
+    return recordOpponentCardReveal(this.state, this.definitions, player, sourceDefinitionId);
+  }
+  reduceHoodmonAtk(
+    player: PlayerId,
+    sourceDefinitionId: string,
+    targetPlayer: PlayerId,
+    targetInstanceId: string,
+    amount: number,
+    duration: Modifier["duration"] = "until_end_of_turn",
+  ) {
+    this.state = reduceHoodmonAtkWithCapinCheck(
+      this.state,
+      this.definitions,
+      player,
+      sourceDefinitionId,
+      targetPlayer,
+      targetInstanceId,
+      amount,
+      duration,
+    );
+    return this.state;
+  }
 }
