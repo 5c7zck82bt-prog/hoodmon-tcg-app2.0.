@@ -28,6 +28,10 @@ export interface CmsCard {
   task_difficulty?: number | null;
   task_tier?: "Street" | "Major" | "Crisis" | null;
   magic_subtype?: "Standard" | "Quick" | "Continuous" | "Equipment" | null;
+  alignment?: string[] | null;
+  archetype_tags?: string[] | null;
+  family?: string | null;
+  rules_text?: string | null;
 }
 
 function mapAttack(a: CmsAttack): AttackDefinition {
@@ -61,6 +65,10 @@ export function cmsCardToDefinition(card: CmsCard): CardDefinition {
     taskDifficulty: card.task_difficulty ?? undefined,
     taskTier: card.task_tier ?? undefined,
     magicSubtype: card.magic_subtype ?? undefined,
+    alignment: card.alignment ?? undefined,
+    archetypeTags: card.archetype_tags ?? undefined,
+    family: card.family ?? undefined,
+    rulesText: card.rules_text ?? undefined,
   };
 }
 
