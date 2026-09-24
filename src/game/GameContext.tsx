@@ -9,12 +9,16 @@ interface GameActions {
   passReaction: (player: PlayerId) => void
   resolveReaction: () => void
   applyEffect: (effect: EngineEffect) => void
+  activateCapin: (chosenDefinitionId: string) => void
+  recordOpponentReveal: (sourceDefinitionId: string) => void
+  reduceHoodmonAtk: (sourceDefinitionId: string, targetPlayer: PlayerId, targetInstanceId: string, amount: number) => void
   restart: () => void
 }
 
 interface GameContextValue {
   state: GameState
   definitions: Record<string, CardDefinition>
+  capinSearchCandidates: string[]
   actions: GameActions
 }
 
@@ -58,6 +62,21 @@ export function GameProvider({ children, definitions, setup, seed }: Props) {
     passReaction: (player) => guarded(() => { engineRef.current!.passReaction(player) }),
     resolveReaction: () => guarded(() => { engineRef.current!.resolveReaction() }),
     applyEffect: (effect) => guarded(() => { engineRef.current!.effect(effect) }),
+    activateCapin: (chosenDefinitionId) => guarded(() => {
+      engineRef.current!.activateCapin(engineRef.current!.state.currentPlayerTurn, chosenDefinitionId)
+    }),
+    recordOpponentReveal: (sourceDefinitionId) => guarded(() => {
+      engineRef.current!.recordOpponentReveal(engineRef.current!.state.currentPlayerTurn, sourceDefinitionId)
+    }),
+    reduceHoodmonAtk: (sourceDefinitionId, targetPlayer, targetInstanceId, amount) => guarded(() => {
+      engineRef.current!.reduceHoodmonAtk(
+        engineRef.current!.state.currentPlayerTurn,
+        sourceDefinitionId,
+        targetPlayer,
+        targetInstanceId,
+        amount,
+      )
+    }),
     restart: () => {
       engineRef.current = new HoodmonEngine(definitions, setup)
       seed?.(engineRef.current.state)
@@ -65,7 +84,9 @@ export function GameProvider({ children, definitions, setup, seed }: Props) {
     },
   }), [definitions, guarded, seed, setup, sync])
 
-  return <GameContext.Provider value={{ state, definitions, actions }}>{children}</GameContext.Provider>
+  const capinSearchCandidates = engineRef.current.capinSearchCandidates(state.currentPlayerTurn)
+
+  return <GameContext.Provider value={{ state, definitions, capinSearchCandidates, actions }}>{children}</GameContext.Provider>
 }
 
 export function useGame() {
