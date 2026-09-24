@@ -9,3 +9,4 @@ export * from "./tasks";
 export * from "./movement";
 export * from "./win";
 export * from "./cardDataAdapter";
+export * from "./tamer";
